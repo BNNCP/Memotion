@@ -1,6 +1,17 @@
-const Form = () => {
+import { useState } from "react";
+
+const Form = (props) => {
+    const [name, setName] = useState("");
+    function handleChang(event) {
+        setName(event.target.value);
+    }
+    function handleSubmit(event) {
+        event.preventDefault();
+        props.onSubmit(name);
+        setName("");
+    }
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <h2 className="label-wrapper">
                 <label htmlFor="new-todo-input" className="label__lg">
                     What needs to be done?
@@ -12,6 +23,8 @@ const Form = () => {
                 className="input input__lg"
                 name="text"
                 autoComplete="off"
+                value={name}
+                onChange={handleChang}
             />
             <button type="submit" className="btn btn__primary btn__lg">
                 Add
