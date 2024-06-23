@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\memotion_core.props" />
+</Project>
