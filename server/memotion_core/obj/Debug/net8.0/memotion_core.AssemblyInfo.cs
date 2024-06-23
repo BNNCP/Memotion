@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("memotion_core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aaa54b65c7c526ff5a49f3a9e069ca22a70a6212")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d66b6b5087ac304fb1133bcc32f857fa2d518bdc")]
 [assembly: System.Reflection.AssemblyProductAttribute("memotion_core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("memotion_core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
