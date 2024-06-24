@@ -25,7 +25,11 @@ namespace memotion_core.Repository
             IQueryable<Stock> stocks =  context.Stocks.Include(c=>c.Comments).AsQueryable();
             if(!string.IsNullOrWhiteSpace(query.CompanyName)) stocks = stocks.Where(i=>i.CompanyName.Contains(query.CompanyName));
             if(!string.IsNullOrWhiteSpace(query.Symbol)) stocks = stocks.Where(i=>i.Symbol.Contains(query.Symbol));
-
+            if(!string.IsNullOrWhiteSpace(query.SortBy)){
+                if(query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase)){
+                    stocks = query.IsDescending? stocks.OrderByDescending(i=>i.Symbol):stocks.OrderBy(i=>i.Symbol);
+                }
+            }
             return await stocks.ToListAsync();
         }
 
