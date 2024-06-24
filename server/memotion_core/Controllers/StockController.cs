@@ -30,7 +30,7 @@ namespace memotion_core.Controllers
             return Ok(stocksDto);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id){
             var stocks = await stockRepository.GetByIdAsync(id);
 
@@ -46,16 +46,14 @@ namespace memotion_core.Controllers
             return CreatedAtAction(nameof(GetById), new {id = stockModel.Id} ,stockModel.ToStockDto());
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto){
             Stock? stockModel = await stockRepository.UpdateAsync(id, stockDto);
             if(stockModel==null) return NotFound();
             return Ok(stockModel.ToStockDto());
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id){
             Stock? stockModel = await stockRepository.DeleteAsync(id);
             if(stockModel == null) return NotFound();

@@ -31,15 +31,14 @@ namespace memotion_core.Controllers
             return Ok(commentDtos);
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id){
             Comment? comment = await commentRepository.GetById(id);
             if(comment == null) return NotFound("Comment not found");
             return Ok(comment.ToCommentDto());
         }
 
-        [HttpPost("{stockId}")]
+        [HttpPost("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto commentDto){
             if(!await stockRepository.StockExist(stockId)) return BadRequest("Stock does not exist.");
 
@@ -48,8 +47,7 @@ namespace memotion_core.Controllers
             return CreatedAtAction(nameof(GetById),new {id = comment.Id}, comment.ToCommentDto());
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto commentDto){
             Comment? comment = await commentRepository.UpdateAsync(id, commentDto.ToCommentFromUpdateDto());
             if(comment == null) return NotFound("Comment not found");
@@ -57,8 +55,7 @@ namespace memotion_core.Controllers
             return Ok(comment.ToCommentDto());
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id){
             Comment? comment = await commentRepository.DeleteAsync(id);
             if(comment == null) return NotFound("Comment not found");
