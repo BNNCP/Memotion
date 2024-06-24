@@ -26,6 +26,7 @@ namespace memotion_core.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll(){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             List<Comment> comments = await commentRepository.GetAllAsync();
             List<CommentDto> commentDtos = comments.Select(i=>i.ToCommentDto()).ToList();
             return Ok(commentDtos);
@@ -33,6 +34,7 @@ namespace memotion_core.Controllers
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             Comment? comment = await commentRepository.GetById(id);
             if(comment == null) return NotFound("Comment not found");
             return Ok(comment.ToCommentDto());
@@ -40,6 +42,7 @@ namespace memotion_core.Controllers
 
         [HttpPost("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentRequestDto commentDto){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             if(!await stockRepository.StockExist(stockId)) return BadRequest("Stock does not exist.");
 
             Comment comment = commentDto.ToCommentFromCreateDto(stockId);
@@ -49,6 +52,7 @@ namespace memotion_core.Controllers
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto commentDto){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             Comment? comment = await commentRepository.UpdateAsync(id, commentDto.ToCommentFromUpdateDto());
             if(comment == null) return NotFound("Comment not found");
 
@@ -57,6 +61,7 @@ namespace memotion_core.Controllers
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             Comment? comment = await commentRepository.DeleteAsync(id);
             if(comment == null) return NotFound("Comment not found");
 

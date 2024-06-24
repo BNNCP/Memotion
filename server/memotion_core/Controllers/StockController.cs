@@ -24,6 +24,7 @@ namespace memotion_core.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll(){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             List<Stock> stocks = await stockRepository.GetAllAsync();
             List<StockDto> stocksDto = stocks.Select(s=>s.ToStockDto()).ToList();
 
@@ -32,7 +33,8 @@ namespace memotion_core.Controllers
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id){
-            var stocks = await stockRepository.GetByIdAsync(id);
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+            Stock? stocks = await stockRepository.GetByIdAsync(id);
 
             if(stocks == null) return NotFound();
 
@@ -41,6 +43,7 @@ namespace memotion_core.Controllers
         
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             Stock stockModel = stockDto.ToStockFromCreateDTO();
             await stockRepository.CreateAsync(stockModel);
             return CreatedAtAction(nameof(GetById), new {id = stockModel.Id} ,stockModel.ToStockDto());
@@ -48,6 +51,7 @@ namespace memotion_core.Controllers
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             Stock? stockModel = await stockRepository.UpdateAsync(id, stockDto);
             if(stockModel==null) return NotFound();
             return Ok(stockModel.ToStockDto());
@@ -55,6 +59,7 @@ namespace memotion_core.Controllers
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id){
+            if(!ModelState.IsValid) return BadRequest(ModelState);
             Stock? stockModel = await stockRepository.DeleteAsync(id);
             if(stockModel == null) return NotFound();
 
