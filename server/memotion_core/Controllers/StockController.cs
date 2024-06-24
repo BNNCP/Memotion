@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using memotion_core.Data;
 using memotion_core.Dtos.Stock;
+using memotion_core.Helpers;
 using memotion_core.Interfaces;
 using memotion_core.Mappers;
 using memotion_core.Models;
@@ -23,9 +24,9 @@ namespace memotion_core.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(){
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query){
             if(!ModelState.IsValid) return BadRequest(ModelState);
-            List<Stock> stocks = await stockRepository.GetAllAsync();
+            List<Stock> stocks = await stockRepository.GetAllAsync(query);
             List<StockDto> stocksDto = stocks.Select(s=>s.ToStockDto()).ToList();
 
             return Ok(stocksDto);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using memotion_core.Data;
 using memotion_core.Dtos.Stock;
+using memotion_core.Helpers;
 using memotion_core.Interfaces;
 using memotion_core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,13 @@ namespace memotion_core.Repository
             context = _context;
         }
 
-        public async Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
-            return await context.Stocks.Include(c=>c.Comments).ToListAsync();
+            IQueryable<Stock> stocks =  context.Stocks.Include(c=>c.Comments).AsQueryable();
+            if(!string.IsNullOrWhiteSpace(query.CompanyName)) stocks = stocks.Where(i=>i.CompanyName.Contains(query.CompanyName));
+            if(!string.IsNullOrWhiteSpace(query.Symbol)) stocks = stocks.Where(i=>i.Symbol.Contains(query.Symbol));
+
+            return await stocks.ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
