@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using memotion_core.Dtos.Account;
+using memotion_core.Interfaces;
 using memotion_core.Models;
+using memotion_core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +16,11 @@ namespace memotion_core.Controllers
     public class AccountController: ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
-        public AccountController(UserManager<AppUser> _userManager)
+        private readonly ITokenService tokenService;
+        public AccountController(UserManager<AppUser> _userManager, ITokenService _tokenService)
         {
             userManager = _userManager;
+            tokenService = _tokenService;
         }
 
         [HttpPost("register")]
@@ -33,7 +37,13 @@ namespace memotion_core.Controllers
 
                 if(createdUser.Succeeded){
                     var roleResult = await userManager.AddToRoleAsync(appUser, "User");
-                    if(roleResult.Succeeded) return Ok("User Created");
+                    if(roleResult.Succeeded) return Ok(
+                        new NewUserDto{
+                            UserName = appUser.UserName,
+                            Email = appUser.Email,
+                            Token = tokenService.CreateToken(appUser)
+                        }
+                    );
                     else{
                         return StatusCode(500, roleResult.Errors);
                     }
