@@ -8,6 +8,7 @@ using memotion_core.Helpers;
 using memotion_core.Interfaces;
 using memotion_core.Mappers;
 using memotion_core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ namespace memotion_core.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject query){
             if(!ModelState.IsValid) return BadRequest(ModelState);
             List<Stock> stocks = await stockRepository.GetAllAsync(query);
