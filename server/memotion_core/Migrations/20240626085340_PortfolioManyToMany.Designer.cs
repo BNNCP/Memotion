@@ -12,8 +12,8 @@ using memotion_core.Data;
 namespace memotion_core.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240625075132_Identity")]
-    partial class Identity
+    [Migration("20240626085340_PortfolioManyToMany")]
+    partial class PortfolioManyToMany
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,20 @@ namespace memotion_core.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "638e276e-0e97-4df6-a33d-27b02bf2770c",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "4e88508b-2220-4b0e-b91b-8d027655b554",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -252,6 +266,21 @@ namespace memotion_core.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("memotion_core.Models.Portfolio", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppUserId", "StockId");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("Portfolios");
+                });
+
             modelBuilder.Entity("memotion_core.Models.Stock", b =>
                 {
                     b.Property<int>("Id")
@@ -346,9 +375,35 @@ namespace memotion_core.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("memotion_core.Models.Portfolio", b =>
+                {
+                    b.HasOne("memotion_core.Models.AppUser", "AppUser")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("memotion_core.Models.Stock", "Stock")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("memotion_core.Models.AppUser", b =>
+                {
+                    b.Navigation("Portfolios");
+                });
+
             modelBuilder.Entity("memotion_core.Models.Stock", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Portfolios");
                 });
 #pragma warning restore 612, 618
         }
