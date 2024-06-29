@@ -40,6 +40,10 @@ namespace memotion_core.Repository
             return await context.Stocks.Include(c=>c.Comments).FirstOrDefaultAsync(i=>i.Id == id);
         }
 
+         public async Task<Stock?> GetBySymbolAsync(string symbol){
+            return await context.Stocks.FirstOrDefaultAsync(i=>i.Symbol == symbol);
+         }
+
         public async Task<Stock> CreateAsync(Stock stockModel)
         {
             await context.Stocks.AddAsync(stockModel);

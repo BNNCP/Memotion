@@ -33,5 +33,33 @@ namespace memotion_core.Controllers
             var userPortfolio = await portfolioRepository.GetUserPortfolio(AppUser);
             return Ok(userPortfolio);
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddPortfolio(string symbol){
+            var userName = User.GetUsername();
+            var AppUser = await userManager.FindByNameAsync(userName);
+            var stock = await stockRepository.GetBySymbolAsync(symbol);
+
+            if(stock == null) return BadRequest("Stock not found");
+
+            var userPortfolio = await portfolioRepository.GetUserPortfolio(AppUser);
+
+            if(userPortfolio.Any(i=>i.Symbol.ToLower() == symbol.ToLower())) return BadRequest("Cannot add same stock to portfolio");
+
+            var portfolioModel = new Portfolio{
+                StockId = stock.Id,
+                AppUserId = AppUser.Id
+            };
+
+            await portfolioRepository.CreateAsync(portfolioModel);
+
+            if(portfolioModel == null){
+                return StatusCode(500,"Create failed");
+            }
+            else{
+                return Created();
+            }
+        }
     }
 }
