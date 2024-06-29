@@ -16,5 +16,8 @@ namespace memotion_core.Models
         public int? StockId { get; set; }
         //Navigation Property
         public Stock? Stock { get; set; }
+
+        public string AppUserId {get;set;}
+        public AppUser AppUser {get;set;}
     }
 }
