@@ -22,7 +22,7 @@ namespace memotion_core.Repository
 
         public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
-            IQueryable<Stock> stocks =  context.Stocks.Include(c=>c.Comments).AsQueryable();
+            IQueryable<Stock> stocks =  context.Stocks.Include(c=>c.Comments).ThenInclude(i=>i.AppUser).AsQueryable();
             if(!string.IsNullOrWhiteSpace(query.CompanyName)) stocks = stocks.Where(i=>i.CompanyName.Contains(query.CompanyName));
             if(!string.IsNullOrWhiteSpace(query.Symbol)) stocks = stocks.Where(i=>i.Symbol.Contains(query.Symbol));
             if(!string.IsNullOrWhiteSpace(query.SortBy)){
@@ -37,7 +37,7 @@ namespace memotion_core.Repository
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await context.Stocks.Include(c=>c.Comments).FirstOrDefaultAsync(i=>i.Id == id);
+            return await context.Stocks.Include(c=>c.Comments).ThenInclude(i=>i.AppUser).FirstOrDefaultAsync(i=>i.Id == id);
         }
 
          public async Task<Stock?> GetBySymbolAsync(string symbol){

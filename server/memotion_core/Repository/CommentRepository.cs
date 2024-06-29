@@ -20,12 +20,12 @@ namespace memotion_core.Repository
 
         public async Task<List<Comment>> GetAllAsync()
         {
-            return await context.Comments.ToListAsync();
+            return await context.Comments.Include(i=>i.AppUser).ToListAsync();
         }
 
         public async Task<Comment?> GetById(int id)
         {
-            return await context.Comments.FindAsync(id);
+            return await context.Comments.Include(i=>i.AppUser).FirstOrDefaultAsync(c=>c.Id == id);
         }
 
         public async Task<Comment> CreateAsync(Comment commentModel)

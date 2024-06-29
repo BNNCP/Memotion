@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using memotion_core.Data;
 using memotion_core.Dtos.Comment;
+using memotion_core.Extensions;
 using memotion_core.Interfaces;
 using memotion_core.Mappers;
 using memotion_core.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace memotion_core.Controllers
@@ -17,11 +19,12 @@ namespace memotion_core.Controllers
     {
         private readonly ICommentRepository commentRepository;
         private readonly IStockRepository stockRepository;
-
-        public CommentController(ICommentRepository _commentRepository, IStockRepository _stockRepository)
+        private readonly UserManager<AppUser> userManager;
+        public CommentController(ICommentRepository _commentRepository, IStockRepository _stockRepository, UserManager<AppUser> _userManager)
         {
             commentRepository = _commentRepository;
             stockRepository = _stockRepository;
+            userManager = _userManager;
         }
 
         [HttpGet]
@@ -45,7 +48,11 @@ namespace memotion_core.Controllers
             if(!ModelState.IsValid) return BadRequest(ModelState);
             if(!await stockRepository.StockExist(stockId)) return BadRequest("Stock does not exist.");
 
+            var userName = User.GetUsername();
+            var appUser = await userManager.FindByNameAsync(userName);
+
             Comment comment = commentDto.ToCommentFromCreateDto(stockId);
+            comment.AppUserId = appUser.Id;
             await commentRepository.CreateAsync(comment);
             return CreatedAtAction(nameof(GetById),new {id = comment.Id}, comment.ToCommentDto());
         }
