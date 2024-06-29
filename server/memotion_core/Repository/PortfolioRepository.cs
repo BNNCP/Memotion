@@ -38,5 +38,15 @@ namespace memotion_core.Repository
                 }
             ).ToListAsync();
         }
+
+        public async Task<Portfolio> DeleteAsync(AppUser user, string symbol){
+            var portfolioModel = await context.Portfolios.FirstOrDefaultAsync(i=> i.AppUserId == user.Id && i.Stock.Symbol.ToLower() == symbol.ToLower());
+
+            if(portfolioModel == null) return null;
+
+            context.Portfolios.Remove(portfolioModel);
+            await context.SaveChangesAsync();
+            return portfolioModel;
+        }
     }
 }

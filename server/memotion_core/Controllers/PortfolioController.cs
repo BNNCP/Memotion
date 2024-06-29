@@ -61,5 +61,23 @@ namespace memotion_core.Controllers
                 return Created();
             }
         }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeletePortfolio(string symbol){
+            var userName = User.GetUsername();
+            var AppUser = await userManager.FindByNameAsync(userName);
+            var userPortfolio = await portfolioRepository.GetUserPortfolio(AppUser);
+            var filteredPortfolio = userPortfolio.Where(i=>i.Symbol.ToLower() == symbol.ToLower()).ToList();
+
+            if(filteredPortfolio.Count == 1){
+                await portfolioRepository.DeleteAsync(AppUser, symbol);
+            }
+            else{
+                return BadRequest("Stock is not in your portfolio");
+            }
+
+            return Ok();
+        }
     }
 }
